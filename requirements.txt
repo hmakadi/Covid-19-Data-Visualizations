@@ -1,2 +1,3 @@
-Pandas
-Streamlit
+pandas
+streamlit
+plotly.express
