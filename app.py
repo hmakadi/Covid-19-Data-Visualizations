@@ -26,8 +26,7 @@ if st.sidebar.checkbox('Show dataframe of latest reported counts of cases and de
 if st.sidebar.checkbox('Show dataframe of vaccination data'):
     st.write(df2)
 
-page_names = ['Global overview', 'Comparison dashboard', 'Cases dashboard', 'Deaths dashboard',
-              'Vaccinations dashboard']
+page_names = ['Global overview', 'Cases dashboard', 'Deaths dashboard', 'Vaccinations dashboard']
 page = st.sidebar.radio('Select the page to view', page_names)
 
 if page == 'Global overview':
@@ -48,8 +47,8 @@ if page == 'Global overview':
             df_by_country = country_df.sort_values(by='Cases - cumulative total', ascending=True)
             fig = px.choropleth(df_by_country, locations="Name",
                                 locationmode='country names',
-                                color="Cases - cumulative total",
-                                hover_name="Name",
+                                hover_name="Cases - cumulative total",
+                                color="Name",
                                 color_continuous_scale=px.colors.sequential.Plasma)
             fig.update_layout(title_text="title", margin={"r": 0, "t": 0, "l": 0, "b": 0}, height=400)
             st.plotly_chart(fig, use_container_width=True)
@@ -60,8 +59,8 @@ if page == 'Global overview':
             df_by_country = country_df.sort_values(by='Cases - newly reported in last 7 days', ascending=True)
             fig = px.choropleth(df_by_country, locations="Name",
                                 locationmode='country names',
-                                color="Cases - newly reported in last 7 days",
-                                hover_name="Name",
+                                hover_name="Cases - newly reported in last 7 days",
+                                color="Name",
                                 color_continuous_scale=px.colors.sequential.Plasma)
             fig.update_layout(title_text="title", margin={"r": 0, "t": 0, "l": 0, "b": 0}, height=400)
             st.plotly_chart(fig, use_container_width=True)
@@ -72,8 +71,8 @@ if page == 'Global overview':
             df_by_country = country_df.sort_values(by='Cases - newly reported in last 24 hours', ascending=True)
             fig = px.choropleth(df_by_country, locations="Name",
                                 locationmode='country names',
-                                color="Cases - newly reported in last 24 hours",
-                                hover_name="Name",
+                                hover_name="Cases - newly reported in last 24 hours",
+                                color="Name",
                                 color_continuous_scale=px.colors.sequential.Plasma)
             fig.update_layout(title_text="title", margin={"r": 0, "t": 0, "l": 0, "b": 0}, height=400)
             st.plotly_chart(fig, use_container_width=True)
@@ -91,8 +90,8 @@ if page == 'Global overview':
             df_by_country = country_df.sort_values(by='Deaths - cumulative total', ascending=True)
             fig = px.choropleth(df_by_country, locations="Name",
                                 locationmode='country names',
-                                color="Deaths - cumulative total",
-                                hover_name="Name",
+                                hover_name="Deaths - cumulative total",
+                                color="Name",
                                 color_continuous_scale=px.colors.sequential.Plasma)
             fig.update_layout(title_text="title", margin={"r": 0, "t": 0, "l": 0, "b": 0}, height=400)
             st.plotly_chart(fig, use_container_width=True)
@@ -103,8 +102,8 @@ if page == 'Global overview':
             df_by_country = country_df.sort_values(by='Deaths - newly reported in last 7 days', ascending=True)
             fig = px.choropleth(df_by_country, locations="Name",
                                 locationmode='country names',
-                                color="Deaths - newly reported in last 7 days",
-                                hover_name="Name",
+                                hover_name="Deaths - newly reported in last 7 days",
+                                color="Name",
                                 color_continuous_scale=px.colors.sequential.Plasma)
             fig.update_layout(title_text="title", margin={"r": 0, "t": 0, "l": 0, "b": 0}, height=400)
             st.plotly_chart(fig, use_container_width=True)
@@ -115,8 +114,8 @@ if page == 'Global overview':
             df_by_country = country_df.sort_values(by='Deaths - newly reported in last 24 hours', ascending=True)
             fig = px.choropleth(df_by_country, locations="Name",
                                 locationmode='country names',
-                                color="Deaths - newly reported in last 24 hours",
-                                hover_name="Name",
+                                hover_name="Deaths - newly reported in last 24 hours",
+                                color="Name",
                                 color_continuous_scale=px.colors.sequential.Plasma)
             fig.update_layout(title_text="title", margin={"r": 0, "t": 0, "l": 0, "b": 0}, height=400)
             st.plotly_chart(fig, use_container_width=True)
@@ -176,31 +175,6 @@ if page == 'Global overview':
                                 color_continuous_scale=px.colors.sequential.Plasma)
             fig.update_layout(title_text="title", margin={"r": 0, "t": 0, "l": 0, "b": 0}, height=400)
             st.plotly_chart(fig, use_container_width=True)
-
-elif page == 'Comparison dashboard':
-
-    select_option = ['View the bar chart']
-    option = st.radio('Select an option', select_option)
-
-    if option == 'View the bar chart':
-        country_select = st.selectbox('Select a country', df1['Name'].unique())
-        selected_country = df1[df1['Name'] == country_select]
-        st.markdown("## State level analysis")
-
-
-        def cases_and_deaths_dataframe(df1):
-            compare_cases_and_deaths_dataframe = pd.DataFrame({
-                'Status': ['Number of cases', 'Number of deaths'],
-                'Number of cases and deaths': (df1.iloc[0]['Cases - cumulative total'],
-                                               df1.iloc[0]['Deaths - cumulative total'])})
-            return compare_cases_and_deaths_dataframe
-
-
-        state_total = cases_and_deaths_dataframe(selected_country)
-        state_total_graph = px.bar(state_total, x='Status', y='Number of cases and deaths',
-                                   labels={'Number of cases and deaths': 'Cases and deaths status in %s' % (
-                                       country_select)}, color='Status')
-        st.plotly_chart(state_total_graph)
 
 elif page == 'Cases dashboard':
 
