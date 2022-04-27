@@ -50,7 +50,7 @@ if page == 'Global overview':
                                 hover_name="Cases - cumulative total",
                                 color="Name",
                                 color_continuous_scale=px.colors.sequential.Plasma)
-            fig.update_layout(title_text="title", margin={"r": 0, "t": 0, "l": 0, "b": 0}, height=400)
+            fig.update_layout(title_text='"title"', margin={"r": 0, "t": 0, "l": 0, "b": 0}, height=400)
             st.plotly_chart(fig, use_container_width=True)
 
         elif option == 'New confirmed cases reported in the last 7 days':
@@ -296,7 +296,8 @@ elif page == 'Deaths dashboard':
 
 elif page == 'Vaccinations dashboard':
 
-    select_option = ['View the sun burst chart', 'View the bar chart', 'View the name of vaccines used in each country']
+    select_option = ['View the sun burst chart', 'View the bar chart', 'View the comparison bar chart',
+                     'View the line chart', 'View the name of vaccines used in each country']
     option = st.radio('Select an option', select_option)
 
     if option == 'View the sun burst chart':
@@ -414,17 +415,111 @@ elif page == 'Vaccinations dashboard':
         country_select = st.selectbox('Select a country', df2['COUNTRY'].unique())
         selected_country = df2[df2['COUNTRY'] == country_select]
 
-        st.write('You selected:', country_select)
-
         vaccines_used_dict = df2[['COUNTRY', 'VACCINES_USED']]
 
 
         def vaccination_type_dataframe(df2):
             vaccination_type = pd.DataFrame({
-                'Country': ['selected_country'],
-                'Name of the vaccines used': (df2.iloc[0]['VACCINES_USED'],)})
+                'Country': [country_select],
+                'Name of the vaccines used': (df2.iloc[0]['VACCINES_USED'])})
             return vaccination_type
 
 
         country_total = vaccination_type_dataframe(selected_country)
-        st.write(country_total)
+        st.write('Country: ', country_total['Country'].values[0])
+        st.write('Name of the vaccines used: ', country_total['Name of the vaccines used'].values[0])
+
+    elif option == 'View the line chart':
+
+        option = st.selectbox('What would you like to be visualized?',
+                              ('Cumulative total vaccine doses administered in each region',
+                               'Cumulative number of persons vaccinated with at least one dose in each region',
+                               'Cumulative number of persons fully vaccinated in each region',
+                               'Persons received booster or additional dose in each region'))
+
+        if option == 'Cumulative total vaccine doses administered in each region':
+
+            Region_df = df2.groupby('WHO_REGION', as_index=False).sum()
+
+            Region_fig = px.line(Region_df, x='WHO_REGION', y='TOTAL_VACCINATIONS',
+                                 title='Cumulative total vaccine doses administered in each region')
+            st.plotly_chart(Region_fig, use_container_width=True)
+
+        elif option == 'Cumulative number of persons vaccinated with at least one dose in each region':
+
+            Region_df = df2.groupby('WHO_REGION', as_index=False).sum()
+
+            Region_fig = px.line(Region_df, x='WHO_REGION', y='PERSONS_VACCINATED_1PLUS_DOSE',
+                                 title='Cumulative number of persons vaccinated with at least one dose in each region')
+            st.plotly_chart(Region_fig, use_container_width=True)
+
+        elif option == 'Cumulative number of persons fully vaccinated in each region':
+
+            Region_df = df2.groupby('WHO_REGION', as_index=False).sum()
+
+            Region_fig = px.line(Region_df, x='WHO_REGION', y='PERSONS_FULLY_VACCINATED',
+                                 title='Cumulative number of persons fully vaccinated in each region')
+            st.plotly_chart(Region_fig, use_container_width=True)
+
+        elif option == 'Persons received booster or additional dose in each region':
+
+            Region_df = df2.groupby('WHO_REGION', as_index=False).sum()
+
+            Region_fig = px.line(Region_df, x='WHO_REGION', y='PERSONS_BOOSTER_ADD_DOSE',
+                                 title='Persons received booster or additional dose in each region')
+            st.plotly_chart(Region_fig, use_container_width=True)
+
+        with st.expander("Expand for Attributes definition"):
+            st.write("""**WHO regional offices:**""")
+            st.write("""**WHO Member States are grouped into six WHO regions:**""")
+            st.write("""**AFRO** : Regional Office for Africa""")
+            st.write("""**AMRO** : Regional Office for the Americas""")
+            st.write("""**SEARO** : Regional Office for South-East Asia""")
+            st.write("""**EURO** : Regional Office for Europe""")
+            st.write("""**EMRO** : Regional Office for the Eastern Mediterranean""")
+            st.write("""**WPRO** : Regional Office for the Western Pacific""")
+
+
+    elif option == 'View the comparison bar chart':
+
+        option = st.selectbox('What would you like to be visualized?',
+                              ('Cumulative total vaccine doses administered',
+                               'Cumulative number of persons vaccinated with at least one dose',
+                               'Cumulative number of persons fully vaccinated',
+                               'Persons received booster or additional dose'))
+
+        if option == 'Cumulative total vaccine doses administered':
+
+            top_country = st.slider('select number of top countries to look at:')
+            top_n_countries = df2.groupby('COUNTRY').agg({'TOTAL_VACCINATIONS': 'sum'})['TOTAL_VACCINATIONS'].nlargest(
+                top_country)
+            top_n_fig = px.bar(top_n_countries, x=top_n_countries.index, y='TOTAL_VACCINATIONS',
+                               color=top_n_countries.index)
+            st.plotly_chart(top_n_fig, use_container_width=True)
+
+        elif option == 'Cumulative number of persons vaccinated with at least one dose':
+
+            top_country = st.slider('select number of top countries to look at:')
+            top_n_countries = df2.groupby('COUNTRY').agg({'PERSONS_VACCINATED_1PLUS_DOSE': 'sum'})[
+                'PERSONS_VACCINATED_1PLUS_DOSE'].nlargest(top_country)
+            top_n_fig = px.bar(top_n_countries, x=top_n_countries.index, y='PERSONS_VACCINATED_1PLUS_DOSE',
+                               color=top_n_countries.index)
+            st.plotly_chart(top_n_fig, use_container_width=True)
+
+        elif option == 'Cumulative number of persons fully vaccinated':
+
+            top_country = st.slider('select number of top countries to look at:')
+            top_n_countries = df2.groupby('COUNTRY').agg({'PERSONS_FULLY_VACCINATED': 'sum'})[
+                'PERSONS_FULLY_VACCINATED'].nlargest(top_country)
+            top_n_fig = px.bar(top_n_countries, x=top_n_countries.index, y='PERSONS_FULLY_VACCINATED',
+                               color=top_n_countries.index)
+            st.plotly_chart(top_n_fig, use_container_width=True)
+
+        elif option == 'Persons received booster or additional dose':
+
+            top_country = st.slider('select number of top countries to look at:')
+            top_n_countries = df2.groupby('COUNTRY').agg({'PERSONS_BOOSTER_ADD_DOSE': 'sum'})[
+                'PERSONS_BOOSTER_ADD_DOSE'].nlargest(top_country)
+            top_n_fig = px.bar(top_n_countries, x=top_n_countries.index, y='PERSONS_BOOSTER_ADD_DOSE',
+                               color=top_n_countries.index)
+            st.plotly_chart(top_n_fig, use_container_width=True)
