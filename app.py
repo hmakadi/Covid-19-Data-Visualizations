@@ -50,7 +50,7 @@ if page == 'Global overview':
                                 hover_name="Cases - cumulative total",
                                 color="Name",
                                 color_continuous_scale=px.colors.sequential.Plasma)
-            fig.update_layout(title_text='"title"', margin={"r": 0, "t": 0, "l": 0, "b": 0}, height=400)
+            fig.update_layout(title_text="title", margin={"r": 0, "t": 0, "l": 0, "b": 0}, height=400)
             st.plotly_chart(fig, use_container_width=True)
 
         elif option == 'New confirmed cases reported in the last 7 days':
