@@ -50,7 +50,7 @@ if page == 'Global overview':
                                 hover_name="Cases - cumulative total",
                                 color="Name",
                                 color_continuous_scale=px.colors.sequential.Plasma)
-            fig.update_layout(title_text="title", margin={"r": 0, "t": 0, "l": 0, "b": 0}, height=400)
+            fig.update_layout(title_text='"title"', margin={"r": 0, "t": 0, "l": 0, "b": 0}, height=400)
             st.plotly_chart(fig, use_container_width=True)
 
         elif option == 'New confirmed cases reported in the last 7 days':
@@ -296,7 +296,7 @@ elif page == 'Deaths dashboard':
 
 elif page == 'Vaccinations dashboard':
 
-    select_option = ['View the sun burst chart', 'View the bar chart']
+    select_option = ['View the sun burst chart', 'View the bar chart', 'View the name of vaccines used in each country']
     option = st.radio('Select an option', select_option)
 
     if option == 'View the sun burst chart':
@@ -387,6 +387,7 @@ elif page == 'Vaccinations dashboard':
 
         country_select = st.selectbox('Select a country', df2['COUNTRY'].unique())
         selected_country = df2[df2['COUNTRY'] == country_select]
+        st.write('You selected:', country_select)
         st.markdown("## State level analysis")
 
 
@@ -401,9 +402,29 @@ elif page == 'Vaccinations dashboard':
             return vaccination_dataframe
 
 
-        state_total = persons_vaccinated_dataframe(selected_country)
-        state_total_graph = px.bar(state_total, x='Vaccination Status', y='Number of persons vaccinated',
-                                   labels={'Number of persons vaccinated': 'Number of persons vaccinated in %s' % (
-                                       country_select)},
-                                   color='Vaccination Status')
-        st.plotly_chart(state_total_graph)
+        country_total = persons_vaccinated_dataframe(selected_country)
+        country_total_graph = px.bar(country_total, x='Vaccination Status', y='Number of persons vaccinated',
+                                     labels={'Number of persons vaccinated': 'Number of persons vaccinated in %s' % (
+                                         country_select)},
+                                     color='Vaccination Status')
+        st.plotly_chart(country_total_graph)
+
+    elif option == 'View the name of vaccines used in each country':
+
+        country_select = st.selectbox('Select a country', df2['COUNTRY'].unique())
+        selected_country = df2[df2['COUNTRY'] == country_select]
+
+        st.write('You selected:', country_select)
+
+        vaccines_used_dict = df2[['COUNTRY', 'VACCINES_USED']]
+
+
+        def vaccination_type_dataframe(df2):
+            vaccination_type = pd.DataFrame({
+                'Country': ['selected_country'],
+                'Name of the vaccines used': (df2.iloc[0]['VACCINES_USED'],)})
+            return vaccination_type
+
+
+        country_total = vaccination_type_dataframe(selected_country)
+        st.write(country_total)
