@@ -1,6 +1,6 @@
 pandas
 streamlit
-ploty
+plotly
 plotly.express
 altair
 vega_datasets
