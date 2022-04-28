@@ -178,7 +178,7 @@ if page == 'Global overview':
 
 elif page == 'Cases dashboard':
 
-    select_option = ['View the sun burst chart']
+    select_option = ['View the sun burst chart', 'View the bar chart']
     option = st.radio('Select an option', select_option)
 
     if option == 'View the sun burst chart':
@@ -235,9 +235,46 @@ elif page == 'Cases dashboard':
             fig.update_layout(height=800)
             st.plotly_chart(fig, use_container_width=True, sharing='streamlit')
 
+    elif option == 'View the bar chart':
+
+        option = st.selectbox('What would you like to be visualized?',
+                              ('Cumulative confirmed cases reported to WHO to date',
+                               'New confirmed cases reported in the last 7 days',
+                               'New confirmed cases reported in the last 24 hours'))
+
+        if option == 'Cumulative confirmed cases reported to WHO to date':
+
+            country_select = st.multiselect('Select a country', df1['Name'].unique().tolist())
+            selected_country = df1.loc[df1['Name'].isin(country_select)]
+            selected_country_df = selected_country[['Name', 'Cases - cumulative total']]
+            selected_country_df_graph = alt.Chart(selected_country_df).mark_bar().encode(x='Name:O',
+                                                                                         y='Cases - cumulative total:Q',
+                                                                                         tooltip='Cases - cumulative total')
+            st.altair_chart(selected_country_df_graph, use_container_width=True)
+
+        elif option == 'New confirmed cases reported in the last 7 days':
+
+            country_select = st.multiselect('Select a country', df1['Name'].unique().tolist())
+            selected_country = df1.loc[df1['Name'].isin(country_select)]
+            selected_country_df = selected_country[['Name', 'Cases - newly reported in last 7 days']]
+            selected_country_df_graph = alt.Chart(selected_country_df).mark_bar().encode(x='Name:O',
+                                                                                         y='Cases - newly reported in last 7 days:Q',
+                                                                                         tooltip='Cases - newly reported in last 7 days')
+            st.altair_chart(selected_country_df_graph, use_container_width=True)
+
+        elif option == 'New confirmed cases reported in the last 24 hours':
+
+            country_select = st.multiselect('Select a country', df1['Name'].unique().tolist())
+            selected_country = df1.loc[df1['Name'].isin(country_select)]
+            selected_country_df = selected_country[['Name', 'Cases - newly reported in last 24 hours']]
+            selected_country_df_graph = alt.Chart(selected_country_df).mark_bar().encode(x='Name:O',
+                                                                                         y='Cases - newly reported in last 24 hours:Q',
+                                                                                         tooltip='Cases - newly reported in last 24 hours')
+            st.altair_chart(selected_country_df_graph, use_container_width=True)
+
 elif page == 'Deaths dashboard':
 
-    select_option = ['View the sun burst chart']
+    select_option = ['View the sun burst chart', 'View the bar chart']
     option = st.radio('Select an option', select_option)
 
     if option == 'View the sun burst chart':
@@ -293,6 +330,43 @@ elif page == 'Deaths dashboard':
                               title="New confirmed deaths reported in the last 24 hours")
             fig.update_layout(height=800)
             st.plotly_chart(fig, use_container_width=True, sharing='streamlit')
+
+    elif option == 'View the bar chart':
+
+        option = st.selectbox('What would you like to be visualized?',
+                              ('Cumulative confirmed deaths reported to WHO to date',
+                               'New confirmed deaths reported in the last 7 days',
+                               'New confirmed deaths reported in the last 24 hours'))
+
+        if option == 'Cumulative confirmed deaths reported to WHO to date':
+
+            country_select = st.multiselect('Select a country', df1['Name'].unique().tolist())
+            selected_country = df1.loc[df1['Name'].isin(country_select)]
+            selected_country_df = selected_country[['Name', 'Deaths - cumulative total']]
+            selected_country_df_graph = alt.Chart(selected_country_df).mark_bar().encode(x='Name:O',
+                                                                                         y='Deaths - cumulative total:Q',
+                                                                                         tooltip='Deaths - cumulative total')
+            st.altair_chart(selected_country_df_graph, use_container_width=True)
+
+        elif option == 'New confirmed deaths reported in the last 7 days':
+
+            country_select = st.multiselect('Select a country', df1['Name'].unique().tolist())
+            selected_country = df1.loc[df1['Name'].isin(country_select)]
+            selected_country_df = selected_country[['Name', 'Deaths - newly reported in last 7 days']]
+            selected_country_df_graph = alt.Chart(selected_country_df).mark_bar().encode(x='Name:O',
+                                                                                         y='Deaths - newly reported in last 7 days:Q',
+                                                                                         tooltip='Deaths - newly reported in last 7 days')
+            st.altair_chart(selected_country_df_graph, use_container_width=True)
+
+        elif option == 'New confirmed deaths reported in the last 24 hours':
+
+            country_select = st.multiselect('Select a country', df1['Name'].unique().tolist())
+            selected_country = df1.loc[df1['Name'].isin(country_select)]
+            selected_country_df = selected_country[['Name', 'Deaths - newly reported in last 24 hours']]
+            selected_country_df_graph = alt.Chart(selected_country_df).mark_bar().encode(x='Name:O',
+                                                                                         y='Deaths - newly reported in last 24 hours:Q',
+                                                                                         tooltip='Deaths - newly reported in last 24 hours')
+            st.altair_chart(selected_country_df_graph, use_container_width=True)
 
 elif page == 'Vaccinations dashboard':
 
